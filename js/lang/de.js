@@ -71,6 +71,12 @@ I18N.de = {
     err_future: "Die letzte Periode kann nicht in der Zukunft liegen.", err_old: "Das Datum scheint zu alt, bitte überprüfen.",
     welcome_toast: "Willkommen! Ich begleite dich den ganzen Weg 💗", profile_updated: "Profil aktualisiert ✓", close: "Schließen",
     mt_kahvalti: "Frühstück", mt_ara: "Snack", mt_ogle: "Mittag", mt_aksam: "Abend", mt_gece: "Spätabends",
+    notif_title: "🔔 Benachrichtigungen", notif_text: "Einmal am Tag eine kleine Nachricht nur für dich: „Wie geht es dir heute?“, ein aufmunternder Gedanke oder ein spannendes Detail über dein Baby.",
+    notif_on_btn: "Benachrichtigungen einschalten", notif_off_btn: "Benachrichtigungen ausschalten", notif_active: "Benachrichtigungen sind an ✓",
+    notif_denied: "Benachrichtigungen sind blockiert. Du kannst sie in den Einstellungen deines Handys für diese App erlauben.",
+    notif_ios: "Um auf dem iPhone Benachrichtigungen zu erhalten, installiere die App zuerst über Safari → Teilen → „Zum Home-Bildschirm“ und öffne sie dann vom Home-Bildschirm.",
+    notif_unavailable: "Benachrichtigungen funktionieren nur in der veröffentlichten App.",
+    notif_on_toast: "Benachrichtigungen eingeschaltet 💗", notif_off_toast: "Benachrichtigungen ausgeschaltet.",
   },
   kat: { hepsi: "Alle", kahvalti: "Frühstück", sut: "Milchprodukte", et: "Fleisch & Huhn", balik: "Fisch", baklagil: "Hülsenfrüchte", sebze: "Gemüsegerichte", corba: "Suppen", tahil: "Getreide & Teig", meyve: "Obst", kuruyemis: "Nüsse & Kerne", icecek: "Getränke", tatli: "Süßes & Snacks", dikkat: "⚠️ Vorsicht" },
   nut: {

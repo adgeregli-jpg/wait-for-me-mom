@@ -71,6 +71,12 @@ I18N.en = {
     err_future: "The last period date can't be in the future.", err_old: "The date looks too old, please check it.",
     welcome_toast: "Welcome! I'm with you all the way 💗", profile_updated: "Profile updated ✓", close: "Close",
     mt_kahvalti: "Breakfast", mt_ara: "Snack", mt_ogle: "Lunch", mt_aksam: "Dinner", mt_gece: "Evening",
+    notif_title: "🔔 Notifications", notif_text: "A small note just for you once a day: \"How are you today?\", an encouraging thought or a fascinating fact about your baby.",
+    notif_on_btn: "Turn on notifications", notif_off_btn: "Turn off notifications", notif_active: "Notifications are on ✓",
+    notif_denied: "Notification permission is blocked. You can allow notifications for this app in your phone's settings.",
+    notif_ios: "To get notifications on iPhone, first install the app via Safari → Share → \"Add to Home Screen\", then open it from your home screen.",
+    notif_unavailable: "Notifications only work in the published app.",
+    notif_on_toast: "Notifications turned on 💗", notif_off_toast: "Notifications turned off.",
   },
   kat: { hepsi: "All", kahvalti: "Breakfast", sut: "Dairy", et: "Meat & chicken", balik: "Fish", baklagil: "Legumes", sebze: "Vegetable dishes", corba: "Soups", tahil: "Grains & pastry", meyve: "Fruit", kuruyemis: "Nuts & seeds", icecek: "Drinks", tatli: "Sweets & snacks", dikkat: "⚠️ Caution" },
   nut: {
