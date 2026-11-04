@@ -2,7 +2,7 @@ name: Günlük bildirim
 
 on:
   schedule:
-    - cron: "5 0 * * *"   # her gün 00:05 UTC; OneSignal herkese kendi saatiyle 10:00'da iletir
+    - cron: "5 0 * * *"   # her gün 00:05 UTC; OneSignal herkese kendi saatiyle 09-12-15-18-21'de iletir
   workflow_dispatch:
     inputs:
       kuru:
@@ -10,10 +10,10 @@ on:
         type: boolean
         default: true
       tur:
-        description: "Mesaj türü (boş = günün sırası)"
+        description: "Mesaj türü (boş = günün 5 bildiriminin hepsi)"
         type: choice
         default: ""
-        options: ["", "halin", "hafta", "motivasyon", "bilgi"]
+        options: ["", "halin", "folik", "hafta", "bilgi", "motivasyon", "gece"]
 
 permissions:
   contents: read
