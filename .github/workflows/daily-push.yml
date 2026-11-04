@@ -1,0 +1,33 @@
+name: Günlük bildirim
+
+on:
+  schedule:
+    - cron: "5 0 * * *"   # her gün 00:05 UTC; OneSignal herkese kendi saatiyle 10:00'da iletir
+  workflow_dispatch:
+    inputs:
+      kuru:
+        description: "Kuru çalıştırma: göndermeden sadece mesajları göster"
+        type: boolean
+        default: true
+      tur:
+        description: "Mesaj türü (boş = günün sırası)"
+        type: choice
+        default: ""
+        options: ["", "halin", "hafta", "motivasyon", "bilgi"]
+
+permissions:
+  contents: read
+
+jobs:
+  gonder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/daily-push.js
+        env:
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+          KURU: ${{ github.event_name == 'workflow_dispatch' && inputs.kuru && 'true' || 'false' }}
+          TUR: ${{ inputs.tur }}
