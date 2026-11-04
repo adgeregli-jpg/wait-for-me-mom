@@ -1,6 +1,7 @@
 // Günlük bildirim: GitHub Actions her gün çalıştırır, OneSignal üzerinden
 // her kullanıcıya kendi saatine ve diline göre günde 5 not gönderir:
-// 09:00 halini sorma, 12:00 bebeğin haftası, 15:00 günün bilgisi, 18:00 motivasyon, 21:00 iyi geceler.
+// 09:00 halini sorma, 12:00 bebeğin haftası, 15:00 günün bilgisi, 18:00 motivasyon, 21:00 iyi geceler;
+// ilk trimesterde ayrıca 10:30 ve 20:30'da folik asit hatırlatması.
 // Ortam: ONESIGNAL_API_KEY (gizli), KURU=true ise göndermeden sadece yazdırır, TUR ile tür zorlanabilir.
 "use strict";
 const fs = require("fs");
@@ -35,7 +36,16 @@ const GECE = {
   ru: ["Спокойной ночи, мама 🌙 Сегодня ты снова сделала для малыша так много.", "Спать на левом боку полезно и тебе, и малышу 🌙", "Как прошёл твой день? Не забудь записать, что ела, и хорошо отдохни 💗", "День закончился, и ты снова окружила малыша такой любовью. Сладких снов 🌙"],
 };
 
-const temiz =(s) => String(s || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+// İlk trimesterde folik asit hatırlatması (sabah / akşam)
+const FOLIK = {
+  tr: ["💊 Folik asidini aldın mı? Bebeğinin sinir sistemi için bu ilk aylar çok önemli.", "💊 Küçük bir hatırlatma: bugünkü folik asidini unutma 💗"],
+  en: ["💊 Have you taken your folic acid? These first months are vital for your baby's nervous system.", "💊 A gentle reminder: don't forget today's folic acid 💗"],
+  de: ["💊 Hast du deine Folsäure genommen? Diese ersten Monate sind für das Nervensystem deines Babys sehr wichtig.", "💊 Kleine Erinnerung: Vergiss deine Folsäure für heute nicht 💗"],
+  ar: ["💊 هل تناولتِ حمض الفوليك؟ هذه الأشهر الأولى مهمة جداً للجهاز العصبي لطفلكِ.", "💊 تذكير لطيف: لا تنسي حمض الفوليك اليوم 💗"],
+  ru: ["💊 Ты приняла фолиевую кислоту? Первые месяцы очень важны для нервной системы малыша.", "💊 Небольшое напоминание: не забудь сегодняшнюю фолиевую кислоту 💗"],
+};
+
+const temiz = (s) => String(s || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 function kisalt(s, max) {
   s = temiz(s);
   if (s.length <= max) return s;
@@ -85,14 +95,15 @@ async function gonder(ad, saat, baslik, metin, filtre) {
 async function main() {
   if (!KURU && !KEY) { console.error("ONESIGNAL_API_KEY tanımlı değil (Settings → Secrets and variables → Actions)."); process.exit(1); }
   // Tür ve kullanıcının yerel saatiyle gönderim zamanı; TUR verilirse yalnızca o tür gider
-  const PLAN = [["halin", "9:00AM"], ["hafta", "12:00PM"], ["bilgi", "3:00PM"], ["motivasyon", "6:00PM"], ["gece", "9:00PM"]];
-  const secili = PLAN.filter(([tur]) => !process.env.TUR || process.env.TUR === tur);
+  const PLAN = [["halin", "9:00AM"], ["folik-sabah", "10:30AM"], ["hafta", "12:00PM"], ["bilgi", "3:00PM"], ["motivasyon", "6:00PM"], ["folik-aksam", "8:30PM"], ["gece", "9:00PM"]];
+  const secili = PLAN.filter(([tur]) => !process.env.TUR || tur.startsWith(process.env.TUR));
   const i = BUGUN;
   const uygulama = dilHer(() => "Wait for Me, Mom");
   console.log(`Gün ${BUGUN}, türler: ${secili.map((p) => p[0]).join(", ")}${KURU ? " (kuru çalıştırma)" : ""}`);
 
   for (const [tur, saat] of secili) {
     if (tur === "halin") await gonder("halin", saat, uygulama, dilHer((l) => HALIN[l][i % HALIN[l].length]), HERKES);
+    if (tur.startsWith("folik")) await gonder(tur, saat, uygulama, dilHer((l) => FOLIK[l][tur === "folik-sabah" ? 0 : 1]), aralik(0, 97));
     if (tur === "gece") await gonder("gece", saat, uygulama, dilHer((l) => GECE[l][i % GECE[l].length]), HERKES);
     if (tur === "motivasyon") await gonder("motivasyon", saat, uygulama, dilHer((l) => "💗 " + kisalt(mot(l, i), 170)), HERKES);
     if (tur === "hafta") {
