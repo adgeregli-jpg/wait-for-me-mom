@@ -1,6 +1,9 @@
 // Çevrimdışı çalışma: uygulama dosyalarını önbelleğe alır.
 // Dosyaları güncellediğinde SURUM'ü artır ki telefonlar yeni sürümü alsın.
-const SURUM = "waitformemom-v3";
+// Bildirimler: OneSignal'in push işleyicisini bu service worker'a dahil et
+try { importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js"); } catch (e) { /* çevrimdışı */ }
+
+const SURUM = "waitformemom-v4";
 const DOSYALAR = [
   "./", "./index.html", "./manifest.webmanifest",
   "./css/style.css",
