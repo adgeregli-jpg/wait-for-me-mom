@@ -525,6 +525,8 @@
         ${S.kilolar.length ? `<details style="margin-top:10px"><summary class="small muted" style="cursor:pointer">${t("records", { n: S.kilolar.length })}</summary>
           ${S.kilolar.slice().reverse().map((x) => `<div class="food-item" style="margin-top:6px"><div class="info"><div class="name">${sayi(x.kg)} kg</div><div class="meta">${tarihYaz(x.d)}</div></div><button class="del" data-ksil="${x.d}" aria-label="${t("delete")}">✕</button></div>`).join("")}</details>` : ""}
       </div>
+      <div class="section-title"><h2>${t("notif_title")}</h2></div>
+      <div class="card"><p style="margin-top:0">${t("notif_text")}</p><div id="bildirimKutu"></div></div>
       <div class="section-title"><h2>${t("lang_title")}</h2></div>
       <div class="card">${dilSecici()}</div>
       <div class="section-title"><h2>${t("theme_title")}</h2></div>
@@ -547,6 +549,7 @@
     $$("[data-ksil]").forEach((b) => b.onclick = () => { S.kilolar = S.kilolar.filter((x) => x.d !== b.dataset.ksil); kaydet(); cizBen(); });
     $$("[data-tema]").forEach((b) => b.onclick = () => { S.tema = b.dataset.tema; temaUygula(); kaydet(); cizBen(); });
     dilBagla();
+    bildirimKartiDoldur();
     $("#profDuzen").onclick = () => profilFormu(false);
     $("#yedekBtn").onclick = () => {
       const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
@@ -555,7 +558,7 @@
   }
   function dilBagla() {
     $$("[data-dil]").forEach((b) => b.onclick = () => {
-      dilSec(b.dataset.dil); kaydet();
+      dilSec(b.dataset.dil); kaydet(); bildirimEtiketle();
       if (!$("#welcome").classList.contains("hidden")) profilFormu(true, formDegerleri());
       else ciz();
     });
@@ -680,11 +683,71 @@
       $("#welcome").classList.add("hidden"); modalKapat();
       secHafta = null; diyetTri = null;
       git(aktifSayfa);
+      bildirimEtiketle();
       toast(ilk ? t("welcome_toast") : t("profile_updated"));
     };
   }
 
   function temaUygula() { document.documentElement.setAttribute("data-theme", S.tema || "pudra"); }
+
+  // ---------- Bildirimler (OneSignal) ----------
+  const ONESIGNAL_APP_ID = "e63cede8-0c4a-4595-95e1-b879a9464c34";
+  const YAYIN_HOST = "adgeregli-jpg.github.io";
+  const bildirimDestek = () => location.host === YAYIN_HOST && "Notification" in window;
+  function bildirimSirasi(fn) {
+    if (location.host !== YAYIN_HOST) return;
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(fn);
+  }
+  function bildirimBaslat() {
+    bildirimSirasi(async (OS) => {
+      await OS.init({
+        appId: ONESIGNAL_APP_ID,
+        serviceWorkerPath: "wait-for-me-mom/sw.js",
+        serviceWorkerParam: { scope: "/wait-for-me-mom/" },
+      });
+      OS.User.PushSubscription.addEventListener("change", () => { if (aktifSayfa === "ben") bildirimKartiDoldur(); });
+    });
+    bildirimEtiketle();
+  }
+  // Gönderilecek mesajları dile ve gebelik haftasına göre seçebilmek için etiketler
+  function bildirimEtiketle() {
+    bildirimSirasi(async (OS) => {
+      try {
+        OS.User.setLanguage(AKTIF_DIL);
+        if (!S.profil) return;
+        const g = gebelik();
+        OS.User.addTags({ hafta: String(Math.max(0, g.hafta)), trimester: String(g.tri), dil: AKTIF_DIL });
+      } catch (e) { /* bildirim servisi yoksa sessizce geç */ }
+    });
+  }
+  const iosTarayici = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !(window.navigator.standalone || matchMedia("(display-mode: standalone)").matches);
+  function bildirimKartiDoldur() {
+    const kutu = $("#bildirimKutu");
+    if (!kutu) return;
+    if (!bildirimDestek()) {
+      kutu.innerHTML = `<p class="small muted" style="margin:0">${iosTarayici() ? t("notif_ios") : t("notif_unavailable")}</p>`;
+      return;
+    }
+    bildirimSirasi(async (OS) => {
+      const acik = OS.User.PushSubscription.optedIn && Notification.permission === "granted";
+      if (Notification.permission === "denied") {
+        kutu.innerHTML = `<div class="alert warn small" style="margin:0">${t("notif_denied")}</div>`;
+        return;
+      }
+      kutu.innerHTML = acik
+        ? `<div class="row" style="justify-content:space-between"><span class="status-pill st-good">${t("notif_active")}</span><button class="btn light small" id="bildirimBtn" style="flex:0 0 auto">${t("notif_off_btn")}</button></div>`
+        : `<button class="btn block" id="bildirimBtn">${t("notif_on_btn")}</button>`;
+      $("#bildirimBtn").onclick = async () => {
+        if (acik) { await OS.User.PushSubscription.optOut(); toast(t("notif_off_toast")); }
+        else {
+          await OS.Notifications.requestPermission();
+          if (Notification.permission === "granted") { await OS.User.PushSubscription.optIn(); bildirimEtiketle(); toast(t("notif_on_toast")); }
+        }
+        bildirimKartiDoldur();
+      };
+    });
+  }
 
   // ---------- Başlat ----------
   function baslat() {
@@ -695,11 +758,12 @@
     if (ls) {
       ls.innerHTML = DILLER.map((d) => `<option value="${d.kod}">${d.bayrak} ${d.ad}</option>`).join("");
       ls.value = AKTIF_DIL;
-      ls.onchange = () => { dilSec(ls.value); kaydet(); ciz(); };
+      ls.onchange = () => { dilSec(ls.value); kaydet(); bildirimEtiketle(); ciz(); };
     }
     $$(".nav button").forEach((b) => b.onclick = () => { if (b.dataset.p === "beslenme") secGun = gunAnahtari(); git(b.dataset.p); });
     $("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") modalKapat(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") modalKapat(); });
+    bildirimBaslat();
     if (!S.profil) profilFormu(true);
     else git("bugun");
   }

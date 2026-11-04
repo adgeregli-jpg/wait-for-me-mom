@@ -83,6 +83,12 @@ I18N.tr = {
     err_future: "Son adet tarihi gelecekte olamaz.", err_old: "Tarih çok eski görünüyor, lütfen kontrol et.",
     welcome_toast: "Hoş geldin! Bu yolculukta hep yanındayım 💗", profile_updated: "Profil güncellendi ✓", close: "Kapat",
     mt_kahvalti: "Kahvaltı", mt_ara: "Ara öğün", mt_ogle: "Öğle", mt_aksam: "Akşam", mt_gece: "Gece",
+    notif_title: "🔔 Bildirimler", notif_text: "Günde bir kez sana özel küçük bir not: \"Bugün nasılsın?\", moral veren bir cümle ya da bebeğinle ilgili merak uyandıran bir bilgi.",
+    notif_on_btn: "Bildirimleri aç", notif_off_btn: "Bildirimleri kapat", notif_active: "Bildirimler açık ✓",
+    notif_denied: "Bildirim izni engellenmiş. Telefonunun ayarlarından bu uygulamaya bildirim izni verebilirsin.",
+    notif_ios: "iPhone'da bildirim almak için önce Safari'de Paylaş → \"Ana Ekrana Ekle\" ile uygulamayı kur, sonra uygulamayı ana ekrandan aç.",
+    notif_unavailable: "Bildirimler yalnızca yayınlanmış uygulamada çalışır.",
+    notif_on_toast: "Bildirimler açıldı 💗", notif_off_toast: "Bildirimler kapatıldı.",
   },
 };
 
