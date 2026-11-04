@@ -295,7 +295,7 @@
       <ul class="clean">${acilListesi().map((x) => `<li>${x}</li>`).join("")}</ul>`);
   }
   function uyariMetni() {
-    return `<p class="disclaimer">${t("disclaimer")}<br><span class="credit">${t("producer")}</span></p>`;
+    return `<p class="disclaimer">${t("disclaimer")}<br><span class="credit">${t("producer")}</span> · <a href="privacy.html?lang=${AKTIF_DIL}">${t("privacy")}</a></p>`;
   }
 
   // ---------- Sayfa: Beslenme ----------
