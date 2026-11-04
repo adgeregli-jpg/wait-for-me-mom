@@ -717,7 +717,9 @@
         OS.User.setLanguage(AKTIF_DIL);
         if (!S.profil) return;
         const g = gebelik();
-        OS.User.addTags({ hafta: String(Math.max(0, g.hafta)), trimester: String(g.tri), dil: AKTIF_DIL });
+        const [y, m, d] = S.profil.sat.split("-").map(Number);
+        // sat_gun: son adet tarihinin UTC gün numarası; günlük gönderim betiği haftayı buradan hesaplar
+        OS.User.addTags({ sat_gun: String(Math.round(Date.UTC(y, m - 1, d) / 86400000)), hafta: String(Math.max(0, g.hafta)), trimester: String(g.tri), dil: AKTIF_DIL });
       } catch (e) { /* bildirim servisi yoksa sessizce geç */ }
     });
   }
