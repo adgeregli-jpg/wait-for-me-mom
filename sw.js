@@ -3,9 +3,9 @@
 // Bildirimler: OneSignal'in push işleyicisini bu service worker'a dahil et
 try { importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js"); } catch (e) { /* çevrimdışı */ }
 
-const SURUM = "waitformemom-v5";
+const SURUM = "waitformemom-v6";
 const DOSYALAR = [
-  "./", "./index.html", "./manifest.webmanifest",
+  "./", "./index.html", "./privacy.html", "./manifest.webmanifest",
   "./css/style.css",
   "./js/foods.js", "./js/weeks.js", "./js/content.js", "./js/i18n.js",
   "./js/lang/en.js", "./js/lang/de.js", "./js/lang/ar.js", "./js/lang/ru.js", "./js/app.js",
